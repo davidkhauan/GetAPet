@@ -114,97 +114,98 @@ class UserController {
         response.status (200).json ({ user })
     }
 
-    static async editUser(requisition, response) {    
-        const token = getTokenHelper(requisition);
-        const user = await getUserByTokenHelper(token);
+    static async editUser (requisition, response) {    
+        const token = getTokenHelper (requisition)
+        const user = await getUserByTokenHelper (token)
     
-        const { name, email, phone, password, confirmPassword } = requisition.body;
+        const { name, email, phone, password, confirmPassword } = requisition.body
 
         if (requisition.file) {
-            user.image = requisition.file.filename;
+            user.image = requisition.file.filename
         }
     
         if (name) {
-            user.name = name;
+            user.name = name
         }
 
         if (email) {
-            const userExists = await User.findOne({ email: email });
+            const userExists = await User.findOne ({ email: email })
     
             if (user.email !== email && userExists) {
-                return response.status(422).json({ message: 'Email já cadastrado!! Utilize outro email!' });
+                return response.status (422).json ({ message: 'Email já cadastrado!! Utilize outro email!' })
             }
     
-            user.email = email;
+            user.email = email
         }
     
         if (phone) {
-            user.phone = phone;
+            user.phone = phone
         }
     
         if (password) {
             if (password !== confirmPassword) {
-                return response.status(422).json({ message: 'As senhas devem ser iguais!!' });
+                return response.status (422).json ({ message: 'As senhas devem ser iguais!!' })
             }
     
-            const salt = await bcrypt.genSalt(12);
-            const passwordHash = await bcrypt.hash(password, salt);
-            user.password = passwordHash;
+            const salt = await bcrypt.genSalt (12)
+            const passwordHash = await bcrypt.hash (password, salt)
+
+            user.password = passwordHash
         }
     
         try {
-            await User.findByIdAndUpdate({ _id: user._id }, { $set: user }, { new: true });
+            await User.findByIdAndUpdate ({ _id: user._id }, { $set: user }, { new: true })
     
-            return response.status(200).json({ message: 'Usuário atualizado com sucesso!' });
+            return response.status (200).json ({ message: 'Usuário atualizado com sucesso!' })
         } catch (error) {
-            return response.status(500).json({ message: error.message });
+            return response.status (500).json ({ message: error.message })
         }
     }    
 
-    static async updateUser(requisition, response) {
-        const id = requisition.params.id;
+    static async updateUser (requisition, response) {
+        const id = requisition.params.id
 
-        const token = getTokenHelper(requisition);
-        const user = await getUserByTokenHelper(token);
+        const token = getTokenHelper (requisition)
+        const user = await getUserByTokenHelper (token)
 
-        const { name, email, phone, password, confirmPassword } = requisition.body;
+        const { name, email, phone, password, confirmPassword } = requisition.body
 
         if (requisition.file) {
-            user.image = requisition.file.filename;
+            user.image = requisition.file.filename
         }
 
         if (!name) {
-            return response.status(422).json({ message: 'O nome é obrigatório!' });
+            return response.status (422).json ({ message: 'O nome é obrigatório!' })
         }
         if (!email) {
-            return response.status(422).json({ message: 'E-mail é obrigatório!' });
+            return response.status (422).json ({ message: 'E-mail é obrigatório!' })
         }
 
-        const userExists = await User.findOne({ email: email });
+        const userExists = await User.findOne ({ email: email })
 
         if (user.email !== email && userExists) {
-            return response.status(422).json({ message: 'Email já cadastrado!! Utilize outro email!' });
+            return response.status (422).json ({ message: 'Email já cadastrado!! Utilize outro email!' })
         }
 
-        user.name = name;
-        user.email = email;
-        user.phone = phone;
+        user.name = name
+        user.email = email
+        user.phone = phone
 
         if (password !== confirmPassword) {
-            return response.status(422).json({ message: 'As senhas devem ser iguais!!' });
+            return response.status (422).json ({ message: 'As senhas devem ser iguais!!' })
         } else if (password && password === confirmPassword) {
-            const salt = await bcrypt.genSalt(12);
-            const passwordHash = await bcrypt.hash(password, salt);
+            const salt = await bcrypt.genSalt (12)
+            const passwordHash = await bcrypt.hash (password, salt)
 
-            user.password = passwordHash;
+            user.password = passwordHash
         }
 
         try {
-            await User.findByIdAndUpdate({ _id: user._id }, { $set: user }, { new: true });
+            await User.findByIdAndUpdate ({ _id: user._id }, { $set: user }, { new: true })
 
-            return response.status(200).json({ message: 'Usuário atualizado com sucesso!' });
+            return response.status (200).json ({ message: 'Usuário atualizado com sucesso!' })
         } catch (error) {
-            return response.status(500).json({ message: error.message });
+            return response.status (500).json ({ message: error.message })
         }
     }
 }

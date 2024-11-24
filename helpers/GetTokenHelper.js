@@ -1,8 +1,15 @@
 const getTokenHelper = (requisition) => {
-    const authHeader = requisition.headers.authorization
-    const token = authHeader.split (" ") [1]
+    const authHeader = requisition.headers.authorization;
+    if (!authHeader) {
+        throw new Error('Cabeçalho de autorização ausente');
+    }
 
-    return token
-}
+    const tokenParts = authHeader.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+        throw new Error('Token no formato inválido. Esperado "Bearer <token>"');
+    }
 
-module.exports = getTokenHelper
+    return tokenParts[1];
+};
+
+module.exports = getTokenHelper;
